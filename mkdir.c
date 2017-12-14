@@ -8,15 +8,18 @@ void my_mkdir(int argc, char *argv[])
   
   if(argc==1)
     printf("usage : mkdir dirname\n");
+  /*
   else if(argc==2)
   {
     if(mkdir(argv[1], 0755)==-1)
       printf("error : cannot make dir\n");
   }
+  */
   else
   {
-    for(i=0; i<argc; i++)
-      
+    for(i=1; i<argc; i++)
+      if(mkdir(argv[i], 0755)==-1)
+        printf("error : cannot make dir\n");
   }
   
 }
