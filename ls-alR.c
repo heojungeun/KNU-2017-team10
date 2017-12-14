@@ -40,8 +40,6 @@ typedef struct List_ {
 }List;
 
 
-
-char *getString(); // 동적할당으로 문자입력받기
 void checkFile(struct stat *buf, Info_st *info); // 파일권한 검사함수
 int totalSize(char dirname[]); // 디렉토리 크기 구하는 함수
 void sortFile(List *list); // 파일 이름으로 정렬하는 함수
@@ -64,26 +62,6 @@ void main()
   
   free(dirname);
   return 0;
-}
-
-char *getString()
-{
-  int max = 20;
-  char *line=(char*)malloc(sizeof(char)*max);
-  int i=0;
-  
-  while(1)
-  {
-    line[i]=getchar();
-    if(line[i]=='\n')
-    {
-      line[i]='\0';
-      break;
-    }
-    i++;
-  }
-  
-  return line;
 }
 void checkFile(struct stat *buf, Info_st *info)
 {
