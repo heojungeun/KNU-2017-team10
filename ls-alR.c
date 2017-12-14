@@ -178,7 +178,7 @@ int totalSize(char dirname[])
 	{
 		strcpy(filename,dirname);
 		strcat(filename,"/");
-		strcat(filename,entry->d_name);
+		strcat(filename,input->d_name);
 		if((Istat(filename,&buf))==0)
 			sum+=buf.st_blocks;
 	}
