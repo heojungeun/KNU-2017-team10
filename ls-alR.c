@@ -143,6 +143,26 @@ void checkFile(struct stat *buf, Info_st *info)
 }
 int totalSize(char dirname[])
 {
+	struct dirent *input;
+	struct stat buf;
+	DIR *p;
+	char filename[255];
+	int sum=0;
+	
+	p = opendir(dirname);
+	
+	while((input=readdir(p))!='\0')
+	{
+		strcpy(filename,dirname);
+		strcat(filename,"/");
+		strcat(filename,entry->d_name);
+		if((Istat(filename,&buf))==0)
+			sum+=buf.st_blocks;
+	}
+	closedir(p);
+	
+	return sum/2;
+	
 }
 void sortFile(List *list)
 {
