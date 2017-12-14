@@ -265,10 +265,127 @@ void printList(List *list)
 }
 char *copyPath(char *dirname, char *filename)
 {
+	int len=20;
+	char * path=(char *)malloc(sizeof(char)*len);
+	int i=0, j=0;
+	
+	while(1)
+	{
+		if(dirname[i]=='\0')
+			break;
+		path[i]=dirname[i];	
+		i++;
+	}
+
+	path[i++]='/';
+
+	while(1)
+	{
+		if(filename[j]=='\0')
+		{
+			path[i]='\0';
+			break;
+		}
+		path[i]=filename[j];
+		i++, j++;
+	}
+	
+	return path;
 }
 int saveInStruct(char dirname[])
 {
+	List list;
+	element * elmt={'\0'};
+	Info_st * info;
+	DIR * dirpt;
+	struct dirent * entry;
+	struct stat buf;
+	struct group * grp;
+	struct passwd * pwd;
+	struct tm * time;
+	char fileName[NAME_MAX];
+	int readc=0, total=0;
+	char * dirPath;
+
+	list_init(&list,DeleteInfo);
+
+	if((dirpt=opendir(dirname))=='\0')	
+	{
+		puts("Directory open fail");
+		return -1;
+	}
 	
+	printf("%s:\n",dirname);
+		
+	total=totalSize(dirname);
+	printf("total %d\n",total);
+
+	while((entry=readdir(dirpt))!=NULL)
+	{
+		strcpy(fileName, dirname);
+		strcat(fileName, "/");
+		strcat(fileName,entry->d_name);
+		if((lstat(fileName,&buf)==0))
+		{
+			info=(Info_st *)malloc(sizeof(Info_st));
+			pwd=getpwuid(buf.st_uid);
+			grp=getgrgid(buf.st_gid);
+			strcpy(info->userid, pwd->pw_name);
+			strcpy(info->groupid, grp->gr_name);	
+
+			info->linkcount=buf.st_nlink;
+			info->size=buf.st_size;
+
+			time=localtime(&buf.st_mtime);
+
+			info->date[0]=(time->tm_mon)+1;
+			info->date[1]=time->tm_mday;	
+			info->time[0]=time->tm_hour;
+			info->time[1]=time->tm_min;
+
+			CheckFile(&buf, info);	//파일 권한 검사
+			strcpy(info->filename, entry->d_name);
+
+			if(S_ISLNK(buf.st_mode))
+			{
+				readc=readlink(fileName,info->link,sizeof(info->link));
+				info->link[readc]='\0';
+			}
+			
+			if((list_ins_next(&list,elmt,info))==-1)
+			{	
+				puts("list삽입실패");
+				return -1;
+			}
+		}
+	} 
+
+	sortFile(&list);
+	printList(&list);
+	
+	elmt=list.head;
+
+	while(elmt->next!=0)
+	{
+
+
+		if(((Info_st *)elmt->data)->permission[0]=='d' 
+			&& (strcmp(((Info_st *)elmt->data)->filename,".."))!=0 
+			&& (strcmp(((Info_st *)elmt->data)->filename,"."))!=0)
+
+			
+		{
+			dirPath=copyPath(dirname,((Info_st *)elmt->data)->filename);
+			puts("");
+			saveInStruct(dirPath);
+			free(dirPath);
+		}		
+		elmt=elmt->next;
+	}
+	list_destroy(&list);
+	closedir(dirpt);
+
+	return 0;
 }
 void space(List * list, int max[])
 {
@@ -296,4 +413,7 @@ void space(List * list, int max[])
 	max[0]=strlen(string[0])+1;
 	max[3]=strlen(string[1])+1;
 }
-
+void delete(void *data)
+{
+	free((Info_st *)data);
+}
