@@ -19,6 +19,8 @@ void sortFile(List *list); // 파일 이름으로 정렬하는 함수
 void printList(List *list); // 리스트에 저장된 자료 출력 함수
 char *copyPath(char *dirname, char *filename); // 파일경로 복사하는 함수
 int saveInStruct(char dirname[]); // 디렉토리 자료를 info_st에 저장하는 함수
+void delete(void *data); // 메모리 해제
+void space(List * list, int max[]); // 공간계산
 
 typedef struct{
   char  permission[11];
@@ -31,6 +33,30 @@ typedef struct{
   char  filename[255];
   char  link[4096];
 } Info_st;
+
+typedef struct element {
+
+	void               *data;
+	struct element   *next;
+
+} element;
+
+typedef struct List_ {
+
+	int                size;
+
+	int                (*match)(const void *key1, const void *key2);
+	void               (*destroy)(void *data);
+
+	element           *head;
+	element           *tail;
+
+} List;
+
+void list_init(List *list, void (*destroy)(void *data));
+void list_destroy(List *list);
+int list_ins_next(List *list, ListElmt *element, const void *data);
+int list_rem_next(List *list, ListElmt *element, void **data);
 
 void main()
 {
@@ -166,15 +192,108 @@ int totalSize(char dirname[])
 }
 void sortFile(List *list)
 {
+	int i, j, k;
+	int len1, len2, min;
+	int index;
+	element * ptr;
+	void * temp;
+
+	for(i=list->size-1 ; i>0 ; i--)
+	{
+		for(j=0,ptr=list->head ; j<i ; j++,ptr=ptr->next)
+		{
+			len1=strlen(((Info_st *)ptr->data)->filename);
+			len2=strlen(((Info_st *)ptr->next->data)->filename);
+
+			if(len1<len2)
+				min=len2;
+			else
+				min=len1;	
+
+			for(k=min,index=0; k!=0 ;k--,index++)
+			{
+				if(((Info_st *)ptr->data)->filename[index] >
+					 ((Info_st *)ptr->next->data)->filename[index])
+				{
+					temp=ptr->data;
+					ptr->data=ptr->next->data;
+					ptr->next->data=temp;
+					break;
+				}
+				else if(((Info_st *)ptr->data)->filename[index] ==
+					((Info_st *)ptr->next->data)->filename[index]) 
+				{
+					continue;
+				}
+				break;
+			}
+		}
+	}
 }
 void printList(List *list)
 {
+	int i;
+	int max[4]={0}; //[0]하드링크수,[1]유저아이디,[2]그룹아이디,[3]크기 
+        element * ptr;
+
+        if(list->size==0)
+        {
+                puts("Nothing in here.");
+                return -1;
+        }
+
+	MaxSpace(list,max);
+ 
+        for(i=0,ptr=list->head ; i<list->size ; i++,ptr=ptr->next)
+        {
+		printf("%s",((Info_st *)ptr->data)->permission);
+		printf("%*d",max[0],((Info_st *)ptr->data)->linkcount);
+		printf(" %-*s",max[1],((Info_st *)ptr->data)->userid);
+		printf(" %-*s",max[2],((Info_st *)ptr->data)->groupid);
+		printf("%*d",max[3],((Info_st *)ptr->data)->size);
+		printf(" %2d월 %2d",((Info_st *)ptr->data)->date[0]
+				 ,((Info_st *)ptr->data)->date[1]);
+		printf(" %02d:%02d",((Info_st *)ptr->data)->time[0]
+				,((Info_st *)ptr->data)->time[1]);
+		printf(" %s",((Info_st *)ptr->data)->filename);
+					
+		if(((Info_st *)ptr->data)->permission[0]=='l')
+			printf(" -> %s\n",((Info_st *)ptr->data)->link);
+		else
+			puts("");
+        }       
 }
 char *copyPath(char *dirname, char *filename)
 {
 }
 int saveInStruct(char dirname[])
 {
+	
 }
+void space(List * list, int max[])
+{
+	int i,j;
+        element * ptr;
+	char string[2][10];
 
+	for(i=0,ptr=list->head; i<list->size ; i++,ptr=ptr->next)
+	{
+		if(((Info_st *)ptr->data)->linkcount > max[0])
+			max[0]=((Info_st *)ptr->data)->linkcount;
+
+		if(max[1]<(strlen(((Info_st *)ptr->data)->userid)))
+			max[1]=strlen(((Info_st *)ptr->data)->userid);
+
+		if(max[2]<(strlen(((Info_st *)ptr->data)->groupid)))
+			max[2]=strlen(((Info_st *)ptr->data)->groupid);
+
+		if(max[3]<((Info_st *)ptr->data)->size)
+			max[3]=((Info_st *)ptr->data)->size;
+	}
+	sprintf(string[0],"%d",max[0]);
+	sprintf(string[1],"%d",max[3]);
+
+	max[0]=strlen(string[0])+1;
+	max[3]=strlen(string[1])+1;
+}
 
