@@ -4,6 +4,8 @@
 
 void my_mkdir(int argc, char *argv[])
 {
+  int i;
+  
   if(argc==1)
     printf("usage : mkdir dirname\n");
   else if(argc==2)
@@ -13,7 +15,8 @@ void my_mkdir(int argc, char *argv[])
   }
   else
   {
-  //들어온수만큼mkdir
+    for(i=0; i<argc; i++)
+      
   }
   
 }
