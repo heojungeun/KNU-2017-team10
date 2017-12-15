@@ -10,7 +10,7 @@ ino_t get_inode(char *);
 void printpathto(ino_t);
 void inum_to_name(ino_t,char *,int);
 
-void spwdnew(){
+int spwdnew(){
 
 	printpathto(get_inode("."));//현재 directory의 inode값을 이용하여
 	putchar('\n');              //pritnpathto 함수를 call한다
