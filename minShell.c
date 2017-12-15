@@ -94,11 +94,11 @@ int checkInternalCommand() {
 		return 1;
 	}
 	if (strcmp("cat", command.argv[0]) == 0) {
-		cat();
+		catnew();
 		return 1;
 	}
 	if (strcmp("cp", command.argv[0]) == 0) {
-		clearScreen();
+		cpnew();
 		return 1;
 	}
 	if (strcmp("ls-alR", command.argv[0]) == 0) {
