@@ -41,7 +41,7 @@ typedef struct List_ {
 }List;
 
 
-void lsalRnew()
+void ls_alRnew()
 {
 	char *dirname;
 
