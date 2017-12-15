@@ -2,7 +2,7 @@
 #include<stdio.h>
 #include<stdlib.h>
 
-void my_mkdir(int argc, char *argv[])
+void mkdir_new(int argc, char *argv[])
 {
   int i;
   
