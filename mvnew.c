@@ -26,6 +26,6 @@ void mvnew(int ac ,char *av[])
 			r_size=read(fd1,buf,100);
 			w_size=write(fd2,buf,r_size);
 		}
-	}제
+	}
 	unlink(av[1]);//원본파일 삭제
 }
