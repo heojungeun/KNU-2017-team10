@@ -82,7 +82,7 @@ void changeDir() {
 int checkInternalCommand() {
 
 	if (strcmp("cd", command.argv[0]) == 0) {
-		cd();
+		cd(command.argc, command.argv);
 		return 1;
 	}
 	if (strcmp("clear", command.argv[0]) == 0) {
@@ -98,35 +98,35 @@ int checkInternalCommand() {
 		return 1;
 	}
 	if (strcmp("cp", command.argv[0]) == 0) {
-		cpnew();
+		cpnew(command.argc,command.argv);
 		return 1;
 	}
 	if (strcmp("ls-alR", command.argv[0]) == 0) {
-		clearScreen();
+		ls_alRnew();
 		return 1;
 	}
 	if (strcmp("mkdir", command.argv[0]) == 0) {
-		changeDir();
+		mkdirnew();
 		return 1;
 	}
 	if (strcmp("rmdir", command.argv[0]) == 0) {
-		changeDir();
+		rmdirnew();
 		return 1;
 	}
 	if (strcmp("mv", command.argv[0]) == 0) {
-		clearScreen();
+		mvnew();
 		return 1;
 	}
 	if (strcmp("rm", command.argv[0]) == 0) {
-		clearScreen();
+		rmnew();
 		return 1;
 	}
 	if (strcmp("spwd", command.argv[0]) == 0) {
-		clearScreen();
+		spwdnew();
 		return 1;
 	}
 	if (strcmp("who", command.argv[0]) == 0) {
-		clearScreen();
+		whonew();
 		return 1;
 	}
 	return 0;
