@@ -39,7 +39,7 @@ typedef struct List_ {
 
 }List;
 
-
+/*
 void checkFile(struct stat *buf, Info_st *info); // 파일권한 검사함수
 int totalSize(char dirname[]); // 디렉토리 크기 구하는 함수
 void sortFile(List *list); // 파일 이름으로 정렬하는 함수
@@ -48,10 +48,11 @@ char *copyPath(char *dirname, char *filename); // 파일경로 복사하는 함�
 int saveInStruct(char dirname[]); // 디렉토리 자료를 info_st에 저장하는 함수
 void delete(void *data); // 메모리 해제
 void space(List * list, int max[]); // 공간계산
-void list_init(List *list, void (*destroy)(void *data));
-void list_destroy(List *list);
+void initiateList(List *list, void (*destroy)(void *data));
+void destroyList(List *list);
 int list_ins_next(List *list, ListElmt *element, const void *data);
 int list_rem_next(List *list, ListElmt *element, void **data);
+*/
 
 void main()
 {
@@ -282,7 +283,7 @@ int saveInStruct(char dirname[])
 	int readc=0, total=0;
 	char * dirPath;
 
-	list_init(&list,DeleteInfo);
+	initiateList(&list,DeleteInfo);
 
 	if((dirpt=opendir(dirname))=='\0')	
 	{
@@ -391,4 +392,94 @@ void space(List * list, int max[])
 void delete(void *data)
 {
 	free((Info_st *)data);
+}
+void initiateList(List *list, void (*destroy)(void *data))
+{
+	list->size = 0;
+	list->destroy = destroy;
+	list->head = NULL;
+	list->tail = NULL;
+
+	return;
+}
+void destroyList(List *list) 
+{
+	void               *data;
+
+	while(list->size > 0) 
+	{
+		if (list_rem_next(list, NULL, (void **)&data) == 0 && list->destroy != NULL) //data free함수가 있다면 함수호출 
+		{			//두번째 인제가 NULL일 경우 element앞에서 부터 전부 remove
+			list->destroy(data);
+		}
+	}
+
+	memset(list, 0, sizeof(List));
+
+	return;
+}
+int list_ins_next(List *list, element *elmnt, const void *data) 
+{
+	element           *new_element;
+
+	if ((new_element = (element *)malloc(sizeof(element))) == NULL)
+		return -1;	// 메모리 할당 실패
+
+	new_element->data = (void *)data;	//사용자 data 주소를 Elmt data연결
+
+	if (elmnt == NULL) 	//NULL이면 head로 삽입.
+	{
+		if (list->size == 0)
+			list->tail = new_element;
+
+		new_element->next = list->head;
+		list->head = new_element;
+	}
+
+	else 			// tail로 삽입.
+	{
+		if (elmnt->next == NULL)
+			list->tail = new_element;
+
+		new_element->next = elmnt->next;
+		elmnt->next = new_element;
+	}
+	list->size++; //element 갯수 증가
+
+	return 0;
+}
+int list_rem_next(List *list, element *elmnt, void **data) 
+{
+	element           *old_element;
+
+	if (list->size == 0)	 //삭제할 element가 없는지 검사
+		return -1;
+
+	if (elmnt == NULL)	//head 삭제 
+	{
+		*data = list->head->data;
+		old_element = list->head;
+		list->head = list->head->next;
+
+		if (list->size == 0)
+			list->tail = NULL;
+	}
+	else 	//두번째 인자로 넘어온 element 삭제
+	{
+		if (elmnt->next == NULL)
+			return -1;
+
+		*data = elmnt->next->data;
+		old_element = elmnt->next;
+		elmnt->next = elmnt->next->next;
+
+		if (elmnt->next == NULL)
+			list->tail = elmnt;
+	}
+
+	free(old_element);
+
+	list->size--; //element 갯수 감소
+
+	return 0;
 }
