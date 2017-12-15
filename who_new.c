@@ -29,7 +29,7 @@ int utmp_reload();
 struct utmp *utmp_next();
 utmp_open(char *filename);
 
-int main()
+int whonew()
 {
 	struct utmp	*utbufp;
 
