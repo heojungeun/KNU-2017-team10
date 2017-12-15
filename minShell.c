@@ -58,8 +58,8 @@ void clearScreen() {
 }
 
 // not implemented yet
-void self() {
-	printf("self...\n");
+void cookies() {
+	printf("i hungry and sleepy\n");
 }
 
 // internal command to cd
@@ -89,8 +89,8 @@ int checkInternalCommand() {
 		clearScreen();
 		return 1;
 	}
-	if (strcmp("self", command.argv[0]) == 0) {
-		self();
+	if (strcmp("cookies", command.argv[0]) == 0) {
+		cookies();
 		return 1;
 	}
 	if (strcmp("cat", command.argv[0]) == 0) {
