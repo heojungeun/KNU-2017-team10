@@ -36,33 +36,7 @@ main(int ac, char **av)
 		printf("%d	%s\n",pid,cmdline);
 	}
 	closedir(dir);
-	/*if(av[1][1]='-')
-		oflag = 1;
-	else if(strcmp(av[1],aux)==0)
-		olfag = 2;
-
-
-	if(olfag == 2){
-		printf("PID   CPU   MEM   VSZ   RSS   STAT   START   TIME   COMMAND\n");
-		for()
-		{
-			printf("%d    %.1f    %.1f    %d    %d    ?    D    day    hour:min    %s");
-		}	
-	}
-	else if(oflag == 1){
-		printf("UID	PID	PPID	C	STIME	TTY	TIME	CMD\n");
-		for()
-		{
-			printf("");
-		}
-	else{
-		printf("PID	TTY	TIME	CMD\n");
-		for()
-		{
-			printf("");
-		}	
-	}
-	*/
+	
 }
 
 int getCmdline(char *filename,char *bufstr)
@@ -75,5 +49,4 @@ int getCmdline(char *filename,char *bufstr)
 	fgets(bufstr,256,srcfp);
 	fclose(srcfp);
 
-	printf("get Cmd complite\n");
 }
