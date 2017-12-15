@@ -1,8 +1,3 @@
-<<<<<<< HEAD
-// 2017-11-25 17:13 cd.c
-=======
-// 2017-11-25 19:13 cd.c
->>>>>>> b3ece02bc67047414d53f818e6641c2c04933809
 #include<stdio.h>
 #include<stdlib.h>
 #include<dirent.h>
