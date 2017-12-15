@@ -2,7 +2,7 @@
 #include<stdio.h>
 #include<unistd.h>
 
-int main(int ac, char *av[])
+int mvnew(int ac, char *av[])
  {
 	int result;
 	
