@@ -19,7 +19,7 @@ void my_mkdir(int argc, char *argv[])
   {
     for(i=1; i<argc; i++)
       if(mkdir(argv[i], 0755)==-1)
-        printf("error : cannot make dir\n");
+        printf("error : cannot make dir '%s'\n",argv[i]);
   }
   
 }
