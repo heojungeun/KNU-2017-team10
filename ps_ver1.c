@@ -9,7 +9,7 @@
 #include	<string.h>
 #include	<dirent.h>
 int getCmdline(char*,char*);
-main(int ac, char **av)
+void psnew(int ac, char **av)
 {
 	int pid;
 	DIR *dir;
@@ -19,7 +19,8 @@ main(int ac, char **av)
 	char cmdline[256];
 	int oflag = 0;
 	char aux[3] = "aux";
-	
+	char time[256];
+	char TTY[256];
 	dir = opendir("/proc");
 	
 	printf("PID	CMDLINE\n");
