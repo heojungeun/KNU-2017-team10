@@ -94,7 +94,7 @@ int checkInternalCommand() {
 		return 1;
 	}
 	if (strcmp("cat", command.argv[0]) == 0) {
-		catnew();
+		catnew(command.argc, command.argv);
 		return 1;
 	}
 	if (strcmp("cp", command.argv[0]) == 0) {
