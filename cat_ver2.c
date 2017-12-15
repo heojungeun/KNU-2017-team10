@@ -1,6 +1,6 @@
-/*cat_ver1.c
+/*cat_ver2.c
  *2016114345 허윤
- *2017-11-25 17:00
+ *2017-12-12 17:00
  */
 #include	<stdio.h>
 #include	<sys/stat.h>
@@ -25,7 +25,7 @@ main(int ac,char **av)
 	fd= open(av[1],O_RDONLY);
 
 	while(read(fd,&ones,1))
-	{	printf("what line 	");
+	{	printf("what line	");
 		write(1,&ones,1);
 	close(fd);
 	}
