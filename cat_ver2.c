@@ -25,6 +25,7 @@ main(int ac,char **av)
 	fd= open(av[1],O_RDONLY);
 
 	while(read(fd,&ones,1))
+	{	printf("what line 	");
 		write(1,&ones,1);
 	close(fd);
 	}
