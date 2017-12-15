@@ -5,7 +5,7 @@
 #include<fcntl.h>
 #include<sys/stat.h>
 
-int main(int ac ,char *av[])
+void mvnew(int ac ,char *av[])
 {	
 	int fd1,fd2;
 	int r_size,w_size;
@@ -28,5 +28,4 @@ int main(int ac ,char *av[])
 		}
 	}제
 	unlink(av[1]);//원본파일 삭제
-	return 0;
 }

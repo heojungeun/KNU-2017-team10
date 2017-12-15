@@ -2,7 +2,7 @@
 #include<stdio.h>
 #include<unistd.h>
 
-int main(int ac, char *av[])
+void removenew(int ac, char *av[])
 {
 	if(ac==1){
 		printf("there is not target file\n");
