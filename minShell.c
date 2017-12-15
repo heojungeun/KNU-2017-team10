@@ -58,6 +58,7 @@ void clearScreen() {
 void cookies() {
 	printf("i hungry and sleepy\n");
 	printf("4 dollars!!!!\n");
+	printf("This is A+ project\n");
 }
 
 // This function check is for built in commands
