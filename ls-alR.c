@@ -1,6 +1,7 @@
 //2017-11-29 9:10 lsalR.c
 
 #include<stdio.h>
+#include<string.h>
 #include<stdlib.h>
 #include<dirent.h>
 #include<sys/types.h>
@@ -39,20 +40,7 @@ typedef struct List_ {
 
 }List;
 
-/*
-void checkFile(struct stat *buf, Info_st *info); // 파일권한 검사함수
-int totalSize(char dirname[]); // 디렉토리 크기 구하는 함수
-void sortFile(List *list); // 파일 이름으로 정렬하는 함수
-void printList(List *list); // 리스트에 저장된 자료 출력 함수
-char *copyPath(char *dirname, char *filename); // 파일경로 복사하는 함수
-int saveInStruct(char dirname[]); // 디렉토리 자료를 info_st에 저장하는 함수
-void delete(void *data); // 메모리 해제
-void space(List * list, int max[]); // 공간계산
-void initiateList(List *list, void (*destroy)(void *data));
-void destroyList(List *list);
-int list_ins_next(List *list, ListElmt *element, const void *data);
-int list_rem_next(List *list, ListElmt *element, void **data);
-*/
+//void delete(void *data);
 
 void main()
 {
@@ -64,6 +52,7 @@ void main()
   free(dirname);
   return 0;
 }
+
 void checkFile(struct stat *buf, Info_st *info)
 {
   // directory or file?
@@ -158,7 +147,7 @@ int totalSize(char dirname[])
 		strcpy(filename,dirname);
 		strcat(filename,"/");
 		strcat(filename,input->d_name);
-		if((Istat(filename,&buf))==0)
+		if((lstat(filename,&buf))==0)
 			sum+=buf.st_blocks;
 	}
 	closedir(p);
@@ -218,7 +207,7 @@ void printList(List *list)
                 return -1;
         }
 
-	MaxSpace(list,max);
+	space(list,max);
  
         for(i=0,ptr=list->head ; i<list->size ; i++,ptr=ptr->next)
         {
@@ -268,6 +257,10 @@ char *copyPath(char *dirname, char *filename)
 	
 	return path;
 }
+void delete(void *data)
+{
+	free((Info_st *)data);
+}
 int saveInStruct(char dirname[])
 {
 	List list;
@@ -283,7 +276,7 @@ int saveInStruct(char dirname[])
 	int readc=0, total=0;
 	char * dirPath;
 
-	initiateList(&list,DeleteInfo);
+	list_init(&list,delete);
 
 	if((dirpt=opendir(dirname))=='\0')	
 	{
@@ -319,7 +312,7 @@ int saveInStruct(char dirname[])
 			info->time[0]=time->tm_hour;
 			info->time[1]=time->tm_min;
 
-			CheckFile(&buf, info);	//파일 권한 검사
+			checkFile(&buf, info);	//파일 권한 검사
 			strcpy(info->filename, entry->d_name);
 
 			if(S_ISLNK(buf.st_mode))
@@ -389,11 +382,8 @@ void space(List * list, int max[])
 	max[0]=strlen(string[0])+1;
 	max[3]=strlen(string[1])+1;
 }
-void delete(void *data)
-{
-	free((Info_st *)data);
-}
-void initiateList(List *list, void (*destroy)(void *data))
+
+void list_init(List *list, void (*destroy)(void *data))
 {
 	list->size = 0;
 	list->destroy = destroy;
@@ -402,13 +392,13 @@ void initiateList(List *list, void (*destroy)(void *data))
 
 	return;
 }
-void destroyList(List *list) 
+void list_destroy(List *list) 
 {
 	void               *data;
 
 	while(list->size > 0) 
 	{
-		if (list_rem_next(list, NULL, (void **)&data) == 0 && list->destroy != NULL) //data free함수가 있다면 함수호출 
+		if (list_rem_next(list, NULL, (void **)&data) == 0 && list->destroy != NULL)//data free함수가 있다면 함수호출 
 		{			//두번째 인제가 NULL일 경우 element앞에서 부터 전부 remove
 			list->destroy(data);
 		}
@@ -423,7 +413,7 @@ int list_ins_next(List *list, element *elmnt, const void *data)
 	element           *new_element;
 
 	if ((new_element = (element *)malloc(sizeof(element))) == NULL)
-		return -1;	// 메모리 할당 실패
+		return -1;	//메모리 할당 실패시 -1을 리턴
 
 	new_element->data = (void *)data;	//사용자 data 주소를 Elmt data연결
 
@@ -436,7 +426,7 @@ int list_ins_next(List *list, element *elmnt, const void *data)
 		list->head = new_element;
 	}
 
-	else 			// tail로 삽입.
+	else 			//아니면 tail로 삽입.
 	{
 		if (elmnt->next == NULL)
 			list->tail = new_element;
@@ -452,7 +442,7 @@ int list_rem_next(List *list, element *elmnt, void **data)
 {
 	element           *old_element;
 
-	if (list->size == 0)	 //삭제할 element가 없는지 검사
+	if (list->size == 0)	//삭제할 element가 없는지 검사
 		return -1;
 
 	if (elmnt == NULL)	//head 삭제 
@@ -483,3 +473,4 @@ int list_rem_next(List *list, element *elmnt, void **data)
 
 	return 0;
 }
+
