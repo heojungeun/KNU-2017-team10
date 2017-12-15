@@ -7,8 +7,10 @@
 #define COPYMODE	0644
 
 void oops(char *,char *);
-
-int main(int ac, char *av[])
+/*
+./cpnew originFile copyFile
+*/
+int cpnew(int ac, char *av[])
 {
 	int in_fd, out_fd, n_chars;
 	char buf[BUFFERSIZE];
