@@ -82,7 +82,7 @@ void changeDir() {
 int checkInternalCommand() {
 
 	if (strcmp("cd", command.argv[0]) == 0) {
-		cd(command.argc, command.argv);
+		cdnew(command.argc, command.argv);
 		return 1;
 	}
 	if (strcmp("clear", command.argv[0]) == 0) {
@@ -106,7 +106,7 @@ int checkInternalCommand() {
 		return 1;
 	}
 	if (strcmp("mkdir", command.argv[0]) == 0) {
-		mkdirnew();
+		mkdirnew(command.argc, command.argv);
 		return 1;
 	}
 	if (strcmp("rmdir", command.argv[0]) == 0) {
@@ -114,11 +114,11 @@ int checkInternalCommand() {
 		return 1;
 	}
 	if (strcmp("mv", command.argv[0]) == 0) {
-		mvnew();
+		mvnew(command.argc, command.argv);
 		return 1;
 	}
 	if (strcmp("rm", command.argv[0]) == 0) {
-		rmnew();
+		removenew(command.argc, command.argv);
 		return 1;
 	}
 	if (strcmp("spwd", command.argv[0]) == 0) {
