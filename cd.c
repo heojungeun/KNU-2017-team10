@@ -14,7 +14,7 @@ void cd(int argc, char *argv[])
 	}
 	else if(argc==2)
 	{
-		if(chdir(argv[1]==-1)
+		if(chdir(argv[1]==-1))
 			printf("No such directory\n");
 		
 		// 해당 dir가 존재하지 않을 경우
