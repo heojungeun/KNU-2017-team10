@@ -5,7 +5,6 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <sys/stat.h>
-#include "minishell.h"
 
 #ifndef MINISHELL_H
 #define MINISHELL_H
