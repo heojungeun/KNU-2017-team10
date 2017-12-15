@@ -47,7 +47,7 @@ char * lookupPath(char **, char **);
 int parsePath(char **);
 int executeFileInCommand(char *, char **, char *);
 int executeFileOutCommand(char *, char **, char *);
-void executePipedCommand(char **, char  **, char *, char *);
+
 
 #endif // MINISHELL_H
 
@@ -121,6 +121,10 @@ int checkInternalCommand() {
 		removenew(command.argc, command.argv);
 		return 1;
 	}
+	if (strcmp("ps", command.argv[0]) == 0) {
+		psnew(command.argc, command.argv);
+		return 1;
+	}
 	if (strcmp("spwd", command.argv[0]) == 0) {
 		spwdnew();
 		return 1;
@@ -185,54 +189,6 @@ int excuteCommand() {
 
 }
 
-// this function process commands that have pipeline in it "|"
-// this function is called from processCommand() function
-// functin accepts indes location of | and processes accordingly
-//
-// @param	int		is index location of |
-// @return	bool	return true on success
-int processPipedCommand(int i) {
-	char *argvA[5];
-	char *argvB[5];
-	char *nameA, *nameB;
-
-	int ii;
-	for (ii = 0; ii<i; ii++) {
-		argvA[ii] = command.argv[ii];
-	}
-	argvA[ii] = NULL;
-	nameA = lookupPath(argvA, pathv);
-
-	int j, jj = 0;
-	for (j = i + 1; j<command.argc; j++) {
-		argvB[jj] = command.argv[j];
-		jj++;
-	}
-	argvB[jj] = NULL;
-	nameB = lookupPath(argvB, pathv);
-
-	int pid, status;
-	fflush(stdout);
-
-	switch ((pid = fork())) {
-	case -1:
-		perror("fork");
-		break;
-	case 0:
-		/* child */
-		executePipedCommand(argvA, argvB, nameA, nameB);
-		break;  /* not reached */
-	default:
-		/* parent; fork() return value is child pid */
-		/* These two pids output below will be the same: the process we
-		* forked will be the one which satisfies the wait().  This mightn't
-		* be the case in a more complex situation, e.g. a shell which has
-		* started several "background" processes. */
-		pid = wait(&status);
-		return 0;
-	}
-	return 1;
-}
 
 // this function process commands that have redirection ">"
 // this function is called from processCommand() function
@@ -351,7 +307,7 @@ int main(int argc, char* argv[]) {
 				command.name = lookupPath(command.argv, pathv);
 
 				if (command.name == NULL) {
-					printf("Stub: error\n");
+					printf("no cmd, please fix cmd\n");
 					continue;
 				}
 
@@ -366,7 +322,7 @@ int main(int argc, char* argv[]) {
 
 // print welcome message
 void welcomeMessage() {
-	printf("\nWelcome to mini-shell\n");
+	printf("\nThis is SystemProgramming Proj\nKNU-2017-team10's minishell\n");
 }
 
 // print prompt
@@ -595,50 +551,3 @@ int executeFileOutCommand(char * commandName, char * argv[], char * filename) {
 	return 0;
 }
 
-// this function is called from processPipedCommand(int)
-// this function executes command with "|"
-void executePipedCommand(char *argvA[], char  *argvB[], char * nameA, char * nameB) {
-	int pipefd[2];
-
-	if (pipe(pipefd)) {
-		perror("pipe");
-		exit(127);
-	}
-
-	switch (fork()) {
-	case -1:
-		perror("fork()");
-		exit(127);
-	case 0:
-		close(pipefd[0]);  /* the other side of the pipe */
-		dup2(pipefd[1], 1);  /* automatically closes previous fd 1 */
-		close(pipefd[1]);  /* cleanup */
-						   /* exec ls */
-		execve(nameA, argvA, 0);
-		/* return value from execl() can be ignored because if execl returns
-		* at all, the return value must have been -1, meaning error; and the
-		* reason for the error is stashed in errno *///
-		perror(nameA);
-		exit(126);
-	default:
-		/* parent */
-		/*
-		* It is important that the last command in the pipeline is execd
-		* by the parent, because that is the process we want the shell to
-		* wait on.  That is, the shell should not loop and print the next
-		* prompt, etc, until the LAST process in the pipeline terminates.
-		* Normally this will mean that the other ones have terminated as
-		* well, because otherwise their sides of the pipes won't be closed
-		* so the later-on processes will be waiting for more input still.
-		*/
-		/* do redirections and close the wrong side of the pipe */
-		close(pipefd[1]);  /* the other side of the pipe */
-		dup2(pipefd[0], 0);  /* automatically closes previous fd 0 */
-		close(pipefd[0]);  /* cleanup */
-						   /* exec tr */
-		execve(nameB, argvB, 0);
-		perror(nameB);
-		exit(125);
-
-	}
-}
