@@ -3,7 +3,7 @@
 #include<dirent.h>
 #include<sys/types.h>
 
-void cd(int argc, char *argv[])
+void cdnew(int argc, char *argv[])
 {
 
 	if(argc ==1)
