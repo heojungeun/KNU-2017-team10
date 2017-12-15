@@ -25,10 +25,9 @@ cat2new(int ac,char **av)
 	fd= open(av[1],O_RDONLY);
 
 	while(read(fd,&ones,1))
-	{	printf("what line	");
 		write(1,&ones,1);
 	close(fd);
-	}
+
 	else if(oflag == 1)
 	{
 		fd = open(av[2],O_RDONLY);
