@@ -17,6 +17,7 @@ cat2new(int ac,char **av)
 	int oflag=0;
 	int flag=0;
 	int i=0;
+
 	if(av[1][0]=='-')
 		oflag=1;
 	
@@ -27,7 +28,7 @@ cat2new(int ac,char **av)
 	while(read(fd,&ones,1))
 		write(1,&ones,1);
 	close(fd);
-
+	}
 	else if(oflag == 1)
 	{
 		fd = open(av[2],O_RDONLY);
