@@ -6,6 +6,10 @@
 #include <unistd.h>
 #include <sys/stat.h>
 
+/*
+cc minShell.c cd.c -o minshell
+*/
+
 #ifndef MINISHELL_H
 #define MINISHELL_H
 
@@ -58,9 +62,8 @@ void self() {
 	printf("self...\n");
 }
 
-// internal command to change diractory
-//
-// return void
+// internal command to cd
+/*
 void changeDir() {
 	if (command.argv[1] == NULL) {
 		chdir(getenv("HOME"));
@@ -70,7 +73,7 @@ void changeDir() {
 			printf(" %s: no such directory\n", command.argv[1]);
 		}
 	}
-}
+}*/
 
 // This function check is for built in commands
 // and processes if there any
@@ -79,7 +82,7 @@ void changeDir() {
 int checkInternalCommand() {
 
 	if (strcmp("cd", command.argv[0]) == 0) {
-		changeDir();
+		cd();
 		return 1;
 	}
 	if (strcmp("clear", command.argv[0]) == 0) {
@@ -87,10 +90,45 @@ int checkInternalCommand() {
 		return 1;
 	}
 	if (strcmp("self", command.argv[0]) == 0) {
+		self();
+		return 1;
+	}
+	if (strcmp("cat", command.argv[0]) == 0) {
+		cat();
+		return 1;
+	}
+	if (strcmp("cp", command.argv[0]) == 0) {
 		clearScreen();
 		return 1;
 	}
-
+	if (strcmp("ls-alR", command.argv[0]) == 0) {
+		clearScreen();
+		return 1;
+	}
+	if (strcmp("mkdir", command.argv[0]) == 0) {
+		changeDir();
+		return 1;
+	}
+	if (strcmp("rmdir", command.argv[0]) == 0) {
+		changeDir();
+		return 1;
+	}
+	if (strcmp("mv", command.argv[0]) == 0) {
+		clearScreen();
+		return 1;
+	}
+	if (strcmp("rm", command.argv[0]) == 0) {
+		clearScreen();
+		return 1;
+	}
+	if (strcmp("spwd", command.argv[0]) == 0) {
+		clearScreen();
+		return 1;
+	}
+	if (strcmp("who", command.argv[0]) == 0) {
+		clearScreen();
+		return 1;
+	}
 	return 0;
 }
 
