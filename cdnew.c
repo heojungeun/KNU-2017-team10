@@ -2,7 +2,7 @@
 #include<stdlib.h>
 #include<dirent.h>
 #include<sys/types.h>
-
+// cd, cd <dir>
 void cdnew(int argc, char *argv[])
 {
 
