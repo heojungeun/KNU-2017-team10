@@ -5,7 +5,7 @@
 #include	<stdio.h>
 #include	<sys/stat.h>
 #include	<fcntl.h>
-main(int ac,char **av)
+void catnew(int ac,char **av)
 {
 	char ones;
 	int fd;
