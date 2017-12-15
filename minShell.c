@@ -45,9 +45,6 @@ int readCommand(char *commandLine, char *commandInput);
 int parseCommand(char *commandLine, struct command_t *command);
 char * lookupPath(char **, char **);
 int parsePath(char **);
-int executeFileInCommand(char *, char **, char *);
-int executeFileOutCommand(char *, char **, char *);
-
 
 #endif // MINISHELL_H
 
@@ -61,19 +58,6 @@ void clearScreen() {
 void cookies() {
 	printf("i hungry and sleepy\n");
 }
-
-// internal command to cd
-/*
-void changeDir() {
-	if (command.argv[1] == NULL) {
-		chdir(getenv("HOME"));
-	}
-	else {
-		if (chdir(command.argv[1]) == -1) {
-			printf(" %s: no such directory\n", command.argv[1]);
-		}
-	}
-}*/
 
 // This function check is for built in commands
 // and processes if there any
@@ -136,12 +120,7 @@ int checkInternalCommand() {
 	return 0;
 }
 
-// excuteCommand() executes regular command, commands which doesn't have > < |
-// rediractions
-//
-// example: ls -il, cat filname
-//
-// @return 0 if exec if successful
+// excuteCommand() executes regular command, 
 int excuteCommand() {
 
 	int child_pid;
@@ -190,92 +169,92 @@ int excuteCommand() {
 }
 
 
-// this function process commands that have redirection ">"
-// this function is called from processCommand() function
-// functin accepts indes location of > and processes accordingly
+//// this function process commands that have redirection ">"
+//// this function is called from processCommand() function
+//// functin accepts indes location of > and processes accordingly
+////
+//// @param	int		is index location of > within *argv[]
+//// @return	bool	return true on success
+//int processFileOutCommand(int i) {
 //
-// @param	int		is index location of > within *argv[]
-// @return	bool	return true on success
-int processFileOutCommand(int i) {
-
-	char *argv[5];
-	char *commandName;
-	int j;
-	for (j = 0; j<i; j++) {
-		argv[j] = command.argv[j];
-	}
-	argv[j] = NULL;
-	commandName = lookupPath(argv, pathv);
-
-	return executeFileOutCommand(commandName, argv, command.argv[i + 1]);
-}
-
-// this function process commands that have redirection "<"
-// this function is called from processCommand() function
-// functin accepts indes location of < and processes accordingly
+//	char *argv[5];
+//	char *commandName;
+//	int j;
+//	for (j = 0; j<i; j++) {
+//		argv[j] = command.argv[j];
+//	}
+//	argv[j] = NULL;
+//	commandName = lookupPath(argv, pathv);
 //
-// @param	int		is index location of < within *argv[]
-// @return	bool	return true on success
-int processFileInCommand(int i) {
-	char *argv[5];
-	char *commandName;
-
-	int j;
-	for (j = 0; j<i; j++) {
-		argv[j] = command.argv[j];
-	}
-	argv[j] = NULL;
-	commandName = lookupPath(argv, pathv);
-
-	int pid, status;
-	fflush(stdout);
-
-	switch ((pid = fork())) {
-	case -1:
-		perror("fork");
-		break;
-	case 0:
-		/* child */
-		executeFileInCommand(commandName, argv, command.argv[i + 1]);
-		break;  /* not reached */
-	default:
-		/* parent; fork() return value is child pid */
-		/* These two pids output below will be the same: the process we
-		* forked will be the one which satisfies the wait().  This mightn't
-		* be the case in a more complex situation, e.g. a shell which has
-		* started several "background" processes. */
-		pid = wait(&status);
-		return 0;
-	}
-
-	return 0;
-}
-
-// this function process commands and searches for < > |
-// if there any redirection than processes accordingly
-// if no rediraction than execute regular command
+//	return executeFileOutCommand(commandName, argv, command.argv[i + 1]);
+//}
 //
-// @return	bool	return true on success
-int processCommand() {
-
-	int i;
-	int infile = 0, outfile = 0, pipeLine = 0;
-	char *outFileName;
-	char *inFileName;
-	for (i = 0; i<command.argc; i++) {
-		if (strcmp(command.argv[i], ">") == 0) {
-			return processFileOutCommand(i);
-		}
-		else if (strcmp(command.argv[i], "<") == 0) {
-			return processFileInCommand(i);
-
-		}
-		else if (strcmp(command.argv[i], "|") == 0) {
-			return processPipedCommand(i);
-		}
-	}
-	return excuteCommand();
-}
+//// this function process commands that have redirection "<"
+//// this function is called from processCommand() function
+//// functin accepts indes location of < and processes accordingly
+////
+//// @param	int		is index location of < within *argv[]
+//// @return	bool	return true on success
+//int processFileInCommand(int i) {
+//	char *argv[5];
+//	char *commandName;
+//
+//	int j;
+//	for (j = 0; j<i; j++) {
+//		argv[j] = command.argv[j];
+//	}
+//	argv[j] = NULL;
+//	commandName = lookupPath(argv, pathv);
+//
+//	int pid, status;
+//	fflush(stdout);
+//
+//	switch ((pid = fork())) {
+//	case -1:
+//		perror("fork");
+//		break;
+//	case 0:
+//		/* child */
+//		executeFileInCommand(commandName, argv, command.argv[i + 1]);
+//		break;  /* not reached */
+//	default:
+//		/* parent; fork() return value is child pid */
+//		/* These two pids output below will be the same: the process we
+//		* forked will be the one which satisfies the wait().  This mightn't
+//		* be the case in a more complex situation, e.g. a shell which has
+//		* started several "background" processes. */
+//		pid = wait(&status);
+//		return 0;
+//	}
+//
+//	return 0;
+//}
+//
+//// this function process commands and searches for < > |
+//// if there any redirection than processes accordingly
+//// if no rediraction than execute regular command
+////
+//// @return	bool	return true on success
+//int processCommand() {
+//
+//	int i;
+//	int infile = 0, outfile = 0, pipeLine = 0;
+//	char *outFileName;
+//	char *inFileName;
+//	for (i = 0; i<command.argc; i++) {
+//		if (strcmp(command.argv[i], ">") == 0) {
+//			return processFileOutCommand(i);
+//		}
+//		else if (strcmp(command.argv[i], "<") == 0) {
+//			return processFileInCommand(i);
+//
+//		}
+//		else if (strcmp(command.argv[i], "|") == 0) {
+//			return processPipedCommand(i);
+//		}
+//	}
+//	return excuteCommand();
+//}
 
 /*
 main method
@@ -311,7 +290,7 @@ int main(int argc, char* argv[]) {
 					continue;
 				}
 
-				processCommand();
+				excuteCommand();
 			}
 		}
 	}
@@ -478,76 +457,76 @@ int readCommand(char * buffer, char * commandInput) {
 	return 0;
 }
 
-// this function is called from processFileInCommand(int)
-// this function executes command with "<"
-int executeFileInCommand(char * commandName, char * argv[], char * filename) {
-	int pipefd[2];
-
-	if (pipe(pipefd)) {
-		perror("pipe");
-		exit(127);
-	}
-
-	switch (fork()) {
-	case -1:
-		perror("fork()");
-		exit(127);
-	case 0:
-		close(pipefd[0]);  /* the other side of the pipe */
-		dup2(pipefd[1], 1);  /* automatically closes previous fd 1 */
-		close(pipefd[1]);  /* cleanup */
-		FILE * pFile;
-		char mystring;
-
-		pFile = fopen(filename, "r");
-		if (pFile == NULL) perror("Error opening file");
-		else {
-
-			while ((mystring = fgetc(pFile)) != EOF) {
-				putchar(mystring); /* print the character */
-			}
-			fclose(pFile);
-		}
-		exit(EXIT_SUCCESS);
-
-	default:
-
-		close(pipefd[1]);  /* the other side of the pipe */
-		dup2(pipefd[0], 0);  /* automatically closes previous fd 0 */
-		close(pipefd[0]);  /* cleanup */
-
-		execve(commandName, argv, 0);
-		perror(commandName);
-		exit(125);
-
-	}
-
-	return 0;
-}
-
-// this function is called from processFileOutCommand(int)
-// this function executes command with ">"
-int executeFileOutCommand(char * commandName, char * argv[], char * filename) {
-	int def = dup(1);
-
-	//First, we're going to open a file
-	int file = open(filename, O_WRONLY | O_CREAT | O_TRUNC, S_IRWXU | S_IRGRP | S_IROTH);
-	if (file < 0)    return 1;
-
-	//Now we redirect standard output to the file using dup2
-	if (dup2(file, 1) < 0)    return 1;
-	int pid;
-	if (pid = fork() == 0) {
-		close(file);
-		close(def);
-		execve(commandName, argv, 0);
-		return 0;
-	}
-	dup2(def, 1);
-	close(file);
-	close(def);
-	wait(NULL);
-	close(file);
-	return 0;
-}
-
+//// this function is called from processFileInCommand(int)
+//// this function executes command with "<"
+//int executeFileInCommand(char * commandName, char * argv[], char * filename) {
+//	int pipefd[2];
+//
+//	if (pipe(pipefd)) {
+//		perror("pipe");
+//		exit(127);
+//	}
+//
+//	switch (fork()) {
+//	case -1:
+//		perror("fork()");
+//		exit(127);
+//	case 0:
+//		close(pipefd[0]);  /* the other side of the pipe */
+//		dup2(pipefd[1], 1);  /* automatically closes previous fd 1 */
+//		close(pipefd[1]);  /* cleanup */
+//		FILE * pFile;
+//		char mystring;
+//
+//		pFile = fopen(filename, "r");
+//		if (pFile == NULL) perror("Error opening file");
+//		else {
+//
+//			while ((mystring = fgetc(pFile)) != EOF) {
+//				putchar(mystring); /* print the character */
+//			}
+//			fclose(pFile);
+//		}
+//		exit(EXIT_SUCCESS);
+//
+//	default:
+//
+//		close(pipefd[1]);  /* the other side of the pipe */
+//		dup2(pipefd[0], 0);  /* automatically closes previous fd 0 */
+//		close(pipefd[0]);  /* cleanup */
+//
+//		execve(commandName, argv, 0);
+//		perror(commandName);
+//		exit(125);
+//
+//	}
+//
+//	return 0;
+//}
+//
+//// this function is called from processFileOutCommand(int)
+//// this function executes command with ">"
+//int executeFileOutCommand(char * commandName, char * argv[], char * filename) {
+//	int def = dup(1);
+//
+//	//First, we're going to open a file
+//	int file = open(filename, O_WRONLY | O_CREAT | O_TRUNC, S_IRWXU | S_IRGRP | S_IROTH);
+//	if (file < 0)    return 1;
+//
+//	//Now we redirect standard output to the file using dup2
+//	if (dup2(file, 1) < 0)    return 1;
+//	int pid;
+//	if (pid = fork() == 0) {
+//		close(file);
+//		close(def);
+//		execve(commandName, argv, 0);
+//		return 0;
+//	}
+//	dup2(def, 1);
+//	close(file);
+//	close(def);
+//	wait(NULL);
+//	close(file);
+//	return 0;
+//}
+//
