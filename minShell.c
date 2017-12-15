@@ -110,7 +110,7 @@ int checkInternalCommand() {
 		return 1;
 	}
 	if (strcmp("rmdir", command.argv[0]) == 0) {
-		rmdirnew();
+		rmdirnew(command.argc, command.argv);
 		return 1;
 	}
 	if (strcmp("mv", command.argv[0]) == 0) {
