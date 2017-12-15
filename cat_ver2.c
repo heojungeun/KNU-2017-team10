@@ -1,13 +1,13 @@
-/*cat_ver1.c
+/*cat_ver2.c
  *2016114345 허윤
- *2017-11-25 17:00
+ *2017-12-12 17:00
  */
 #include	<stdio.h>
 #include	<sys/stat.h>
 #include	<fcntl.h>
 #include	<string.h>
 
-main(int ac,char **av)
+cat2new(int ac,char **av)
 {
 	char e='$';
 	char ones;
@@ -27,7 +27,7 @@ main(int ac,char **av)
 	while(read(fd,&ones,1))
 		write(1,&ones,1);
 	close(fd);
-	}
+
 	else if(oflag == 1)
 	{
 		fd = open(av[2],O_RDONLY);
