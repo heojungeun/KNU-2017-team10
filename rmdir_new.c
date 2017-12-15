@@ -8,14 +8,31 @@
 #include <errno.h>
 #include <limits.h>
 
-int rmdir_ex(const char *name) {
+static int rmdir_plus(const char *name);
+
+int rmdirnew(int argc, char **argv) {
+	if (argc < 2) {
+		fprintf(stderr, "Syntax: %s <dir>\n", argv[0]);
+		return EXIT_FAILURE;
+	}
+
+	if (rmdir_plus(argv[1]) == 0) {
+		return EXIT_SUCCESS;
+	}
+	else {
+		perror("rmdir_plus");
+		return EXIT_FAILURE;
+	}
+}
+
+int rmdir_plus(const char *name) {
 	DIR *dir;
 	struct dirent *dirent;
 	char path[PATH_MAX];
 
 	if (rmdir(name) < 0) {
 		switch (errno) {
-		case ENOTDIR: /// not a directory
+		case ENOTDIR:
 			return unlink(name);
 		case ENOTEMPTY:
 			// Erase content
@@ -37,7 +54,7 @@ int rmdir_ex(const char *name) {
 					return -1;
 				}
 
-				if (rmdir_ex(path) < 0) {
+				if (rmdir_plus(path) < 0) {
 					closedir(dir);
 					return -1;
 				}
