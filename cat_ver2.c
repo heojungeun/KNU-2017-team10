@@ -7,7 +7,7 @@
 #include	<fcntl.h>
 #include	<string.h>
 
-cat2new(int ac,char **av)
+void catnew(int ac,char **av)
 {
 	char e='$';
 	char ones;
